@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colorspace Analyzer - Cinematic Color Grader</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"><span class="logo-dot"></span>Colorspace Analyzer</div>
+      <p class="tagline">Transfer the cinematic look of a reference image onto your own footage — and bake it into a LUT.</p>
+    </header>
+
+    <main>
+      <section class="upload-grid">
+        <div class="drop-zone" id="zone-ref" data-role="reference">
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/tiff" hidden>
+          <div class="drop-content">
+            <img class="preview" id="preview-ref" alt="" hidden>
+            <div class="drop-placeholder" id="placeholder-ref">
+              <div class="drop-icon">&#9678;</div>
+              <p class="drop-title">Reference Image</p>
+              <p class="drop-hint">Drop here or click to browse</p>
+              <p class="drop-sub">The look you want to copy</p>
+            </div>
+            <div class="file-meta" id="meta-ref" hidden></div>
+            <button type="button" class="remove-btn" id="remove-ref" hidden>&times; Clear</button>
+          </div>
+        </div>
+
+        <div class="drop-zone" id="zone-tgt" data-role="target">
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/tiff" hidden>
+          <div class="drop-content">
+            <img class="preview" id="preview-tgt" alt="" hidden>
+            <div class="drop-placeholder" id="placeholder-tgt">
+              <div class="drop-icon">&#9678;</div>
+              <p class="drop-title">Target Image</p>
+              <p class="drop-hint">Drop here or click to browse</p>
+              <p class="drop-sub">The image you want to grade</p>
+            </div>
+            <div class="file-meta" id="meta-tgt" hidden></div>
+            <button type="button" class="remove-btn" id="remove-tgt" hidden>&times; Clear</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="options">
+        <div class="option-row">
+          <label class="switch">
+            <input type="checkbox" id="generate-lut" checked>
+            <span class="slider"></span>
+          </label>
+          <div class="option-text">
+            <strong>Generate 3D LUT (.cube)</strong>
+            <span>Bake the grade into a downloadable LUT for editors</span>
+          </div>
+        </div>
+
+        <div class="option-row slider-row">
+          <label for="fg-opacity">Foreground color strength <output id="fg-out">0.20</output></label>
+          <input type="range" id="fg-opacity" min="0" max="1" step="0.05" value="0.2">
+        </div>
+
+        <div class="option-row slider-row">
+          <label for="bg-opacity">Background color strength <output id="bg-out">0.50</output></label>
+          <input type="range" id="bg-opacity" min="0" max="1" step="0.05" value="0.5">
+        </div>
+
+        <div class="option-row select-row">
+          <label for="lut-size">LUT resolution</label>
+          <select id="lut-size">
+            <option value="17">17 (small, fast)</option>
+            <option value="33" selected>33 (standard)</option>
+            <option value="65">65 (high)</option>
+          </select>
+        </div>
+      </section>
+
+      <button type="button" class="grade-btn" id="grade-btn">&#9654; Grade Images</button>
+
+      <section class="progress-wrap" id="progress-wrap" hidden>
+        <div class="progress-head">
+          <span id="progress-message">Starting...</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+        <p class="progress-note">First run downloads the U-2-Net AI model (~170 MB) and may take a minute.</p>
+      </section>
+
+      <section class="results" id="results" hidden>
+        <div class="result-col">
+          <h3>Target (Before)</h3>
+          <img id="before-img" alt="Before">
+        </div>
+        <div class="result-col">
+          <h3>Graded (After)</h3>
+          <img id="after-img" alt="After">
+        </div>
+        <div class="downloads">
+          <a class="dl-btn" id="dl-image" download>Download Graded Image</a>
+          <a class="dl-btn secondary" id="dl-lut" download hidden>Download LUT (.cube)</a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Powered by OpenCV, U-2-Net (rembg) &amp; Flask</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
